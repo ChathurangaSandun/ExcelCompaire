@@ -26,6 +26,12 @@ namespace ExcelCompaire
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/unobtrusive-ajax").Include(
+                "~/Scripts/jquery.unobtrusive-ajax.min.js"
+                ));
+
+
         }
     }
 }
