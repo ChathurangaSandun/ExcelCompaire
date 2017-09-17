@@ -26,7 +26,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId>/subscriptions/a4d51c39-6527-464a-bc26-77d672385939/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/ExcelCompaire</ApplicationInsightsResourceId>
-    <ApplicationInsightsAnnotationResourceId>/subscriptions/a4d51c39-6527-464a-bc26-77d672385939/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/ExcelCompaire</ApplicationInsightsAnnotationResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/a4d51c39-6527-464a-bc26-77d672385939/resourceGroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/ExcelCompaire</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -193,7 +193,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\DifferenceExcelController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="CoreFunctions\ExcelFileReader.cs" />
+    <Compile Include="CoreFunctions\ExcelDifferences.cs" />
     <Compile Include="Enums\ExcelFileType.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -201,6 +201,8 @@
     </Compile>
     <Compile Include="Models\ExcelFile.cs" />
     <Compile Include="Models\ItemDetail.cs" />
+    <Compile Include="Models\SecondDateModel.cs" />
+    <Compile Include="Models\SecondParamModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\ExcelFileViewModels.cs" />
   </ItemGroup>

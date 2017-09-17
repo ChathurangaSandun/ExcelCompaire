@@ -26,6 +26,20 @@ namespace ExcelCompaire.Controllers
         public ActionResult Index()
         {
 
+            string fileName = @"C:\Users\Chathuranga.Sandun\Desktop\chathu\1.xlsx";
+            var workbook = new XLWorkbook(fileName);
+            var plan = workbook.Worksheet("Discussion");
+
+
+            string fileName2 = @"C:\Users\Chathuranga.Sandun\Desktop\chathu\2.xlsx";
+            var workbook2 = new XLWorkbook(fileName2);
+            var pro = workbook2.Worksheet("22-Aug");
+
+            new ExcelDifferences(plan,pro);
+
+
+
+
 
             return View();
         }
