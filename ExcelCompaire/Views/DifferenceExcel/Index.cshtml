@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.planSheetName</h1>
+
+
+@(Html.EJ().Spreadsheet<object>("Spreadsheet")
+      .ScrollSettings(scroll =>
+      {
+          scroll.Height(510);
+      })
+      .ImportSettings(import =>
+      {
+          import.ImportMapper("Home/Import");
+      })
+      .ExportSettings(export =>
+      {
+          export.ExcelUrl("ExcelExport");
+          export.CsvUrl("CsvExport");
+          export.PdfUrl("PdfExport");
+      })
+      .Sheets(sheet =>
+      {
+          sheet.RangeSettings(range =>
+          {
+              range.Datasource((IEnumerable<object>)ViewBag.Datasource).Add();
+          }).Add();
+      })
+      .ClientSideEvents(events => events.LoadComplete("loadComplete").OpenFailure("openfailure"))
+      )
+
+
+@section scripts{
+    <script type="text/javascript">
+        function loadComplete(args) {
+            var xlFormat = this.XLFormat;
+            if (!this.isImport) {
+                this.setWidthToColumns([142, 132, 110, 105, 102, 112, 122, 122, 102]);
+                xlFormat.format({ "style": { "font-weight": "bold" } }, "A1:H1");
+                xlFormat.format({ "type": "shortdate" }, "B2:B11");
+                xlFormat.format({ "type": "time" }, "C2:C11");
+                xlFormat.format({ "type": "currency" }, "E2:H11");
+                this.XLRibbon.updateRibbonIcons();
+            }
+        }
+        function openfailure(args) {
+            var xlObj = $("#Spreadsheet").data("ejSpreadsheet");
+            xlObj.alert(args.statusText);
+        }
+    </script>
+}
+
+
