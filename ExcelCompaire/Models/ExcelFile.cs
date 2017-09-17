@@ -11,6 +11,6 @@ namespace ExcelCompaire.Models
 
        // public string FileName { get; set; }
         public string  FilePath { get; set; }
-        public XLWorkbook Workbook { get; set; }
+        public List<string> Worksheets { get; set; }
     }
 }

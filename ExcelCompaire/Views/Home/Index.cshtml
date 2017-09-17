@@ -2,6 +2,7 @@
 @using Section = DocumentFormat.OpenXml.Office2010.PowerPoint.Section
 
 
+@using ExcelCompaire.Enums
 
 @{
     ViewBag.Title = "Home Page";
@@ -14,14 +15,14 @@
         {
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group col-lg-12">
+                    <div class="form-group col-md-12">
                         <label for="planFilePath">Plan Excel</label>
                         <input type="file" class="form-control" id="planFilePath" name="files">
                     </div>
 
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group col-lg-12 ">
+                    <div class="form-group col-md-12 ">
                         <label for="productFilePath">Product Excel</label>
                         <input type="file" class="form-control" id="productFilePath" name="files">
                     </div>
@@ -35,28 +36,54 @@
 </div>
 
 
+@if (Model != null)
+{
 <div class="panel panel-info" style="margin-top: 20px;">
     <div class="panel-heading">Upload Excel Files</div>
     <div class="panel-body">
         @using (Ajax.BeginForm("UploadFiles", "Home", new AjaxOptions { HttpMethod = "POST" }, new { @id = "excelForm", @class = "row", role = "form", enctype = "multipart/form-data" }))
         {
 
-            if (ViewBag.ExcelFiles != null)
+           
+            foreach (var a in Model.ExcelFiles)
             {
+                <div class="form-group col-md-6">
+                    <label for="sel1">Select list:</label>
+                    <select class="form-control" id="sel1">
 
-                foreach (var a in ViewBag.ExcelFiles)
-                {
-                    <span>@a</span>
-                }
+                   
+                        @foreach (var worksheet in a.Value.Worksheets)
+                        {
+                            <option>@worksheet</option>
+                        }
+
+
+
+                    </select>
+                </div>
             }
+        }
 
 
-            <div class="row">
-                <button type="submit" class="btn btn-default pull-right" style="margin-right: 50px;">Upload</button>
-            </div>
+
+
+
+      
+
+
+        <div class="row">
+            <button type="submit" class="btn btn-default pull-right" style="margin-right: 50px;">Upload</button>
+        </div>
         }
     </div>
 </div>
+}
+
+
+
+
+
+
 
 
 

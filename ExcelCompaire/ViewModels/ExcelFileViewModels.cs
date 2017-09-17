@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using ExcelCompaire.Enums;
+using ExcelCompaire.Models;
 
 namespace ExcelCompaire.ViewModels
 {
     public class ExcelFileViewModels
     {
-
-        public string PlanFilePath { get; set; }
-        public string ProductFilePath { get; set; }
+        public Dictionary<ExcelFileType, ExcelFile> ExcelFiles { get; set; }
 
     }
 }

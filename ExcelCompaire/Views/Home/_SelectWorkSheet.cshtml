@@ -1,0 +1,33 @@
+﻿
+@using ExcelCompaire.Enums
+
+<div class="panel panel-info" style="margin-top: 20px;">
+    <div class="panel-heading">Upload Excel Files</div>
+    <div class="panel-body">
+        @using (Ajax.BeginForm("UploadFiles", "Home", new AjaxOptions { HttpMethod = "POST" }, new { @id = "excelForm", @class = "row", role = "form", enctype = "multipart/form-data" }))
+        {
+
+            if(Model != null)
+            {
+                foreach (var a in Model.ExcelFiles)
+                {
+                    foreach (var worksheet in a.Value.Worksheets)
+                    {
+                        <span>@worksheet</span><br />
+                    }
+
+                   
+                }
+            }
+           
+
+
+        }
+
+
+        <div class="row">
+            <button type="submit" class="btn btn-default pull-right" style="margin-right: 50px;">Upload</button>
+        </div>
+        }
+    </div>
+</div>

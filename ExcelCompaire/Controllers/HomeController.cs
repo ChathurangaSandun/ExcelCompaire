@@ -31,11 +31,9 @@ namespace ExcelCompaire.Controllers
         }
 
         [HttpPost]
-        public Dictionary<ExcelFileType, ExcelFile> UploadFiles(IEnumerable<HttpPostedFileBase> files)
+        public ActionResult  UploadFiles(IEnumerable<HttpPostedFileBase> files)
         {
             Dictionary<ExcelFileType, ExcelFile> excelFiles = new Dictionary<ExcelFileType, ExcelFile>();
-
-
 
             if (ModelState.IsValid)
             {
@@ -70,7 +68,12 @@ namespace ExcelCompaire.Controllers
                 }
             }
 
-            return excelFiles;
+
+          
+            return View( "Index",new ExcelFileViewModels()
+            {
+                ExcelFiles = excelFiles
+            });
         }
 
         private ExcelFile GetExcelWorkBook(string path)
@@ -80,7 +83,7 @@ namespace ExcelCompaire.Controllers
             return new ExcelFile()
             {
                 FilePath = path,
-                Workbook = workbook
+                Worksheets = workbook.Worksheets.Select(o => o.Name).ToList()
             };
         }
     }
