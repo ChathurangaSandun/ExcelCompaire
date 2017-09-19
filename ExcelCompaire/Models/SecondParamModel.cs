@@ -16,7 +16,7 @@ namespace ExcelCompaire.Models
         public string SMV{ get; set; }
         public string SMO { get; set; }
 
-        public List<string> DateList { get; set; }
+        public Dictionary<int,string> DateList { get; set; }
 
 
 

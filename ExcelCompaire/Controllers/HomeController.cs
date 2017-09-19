@@ -35,10 +35,11 @@ namespace ExcelCompaire.Controllers
             var workbook2 = new XLWorkbook(fileName2);
             var pro = workbook2.Worksheet("22-Aug");
 
-            new ExcelDifferences(plan,pro);
+            ExcelDifferences excelDifferences = new ExcelDifferences(plan, pro);
+            List<List<CoupleOfSheet>> secondSheetDetails = excelDifferences.GetAllExcelFileDataList();
+            List<int> unionDateList = excelDifferences.GetUnionDateList();
 
-
-
+            new CreateOutPut().CreateOutPutExcel(secondSheetDetails,unionDateList);
 
 
             return View();

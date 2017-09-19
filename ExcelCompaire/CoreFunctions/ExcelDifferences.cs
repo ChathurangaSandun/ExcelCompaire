@@ -16,6 +16,9 @@ namespace ExcelCompaire.CoreFunctions
         private int _startRow = 15;
         private XLWorkbook workBook;
         private IXLWorksheet workSheet;
+        public List<List<CoupleOfSheet>> ExcelFileDataList { get; set; }
+        public List<int> UnionDateList { get; set; }
+        
 
         public ExcelDifferences(IXLWorksheet planWorksheet, IXLWorksheet productWorksheet)
         {
@@ -25,20 +28,63 @@ namespace ExcelCompaire.CoreFunctions
             List<SecondParamModel> planList = ManupilateSecondPart(_planWorksheet);
             List<SecondParamModel> productList = ManupilateSecondPart(_productWorksheet);
 
-            workBook = new XLWorkbook();
-            workSheet = workBook.Worksheets.Add("Second Part");
+            UnionDateList = CreateDateList(_planWorksheet,_productWorksheet);
 
-            IdentifyDeiff(planList, productList);
+            List<List<CoupleOfSheet>> identifyDeiffList = IdentifyDeiff(planList, productList);
 
+            ExcelFileDataList = identifyDeiffList;
         }
 
-        private void IdentifyDeiff(List<SecondParamModel> planList, List<SecondParamModel> productList)
+        public List<List<CoupleOfSheet>> GetAllExcelFileDataList()
+        {
+             return ExcelFileDataList;
+        }
+
+        public List<int> GetUnionDateList()
+        {
+            return UnionDateList;
+        }
+
+        private List<int> CreateDateList(IXLWorksheet planWorksheet, IXLWorksheet productWorksheet)
+        {
+            List<int> planDateList = DateList(_planWorksheet);
+            List<int> productDateList = DateList(_productWorksheet);
+
+
+            return planDateList.Union(productDateList).ToList().OrderBy(o => o).ToList();
+        }
+
+      
+        private List<int> DateList(IXLWorksheet worksheet)
+        {
+             List<int> dateList = new List<int>();
+
+
+            var lastColumnNumber = worksheet.LastColumnUsed().ColumnNumber();
+
+            //date list
+            List<IXLRangeColumn> dateRangeList = worksheet.Range(13, 9, 13, lastColumnNumber).AsRange().Columns().ToList();
+
+
+            foreach (var cell in dateRangeList)
+            {
+                var dateTime = cell.FirstCell().Value is DateTime ? (DateTime)cell.FirstCell().Value : new DateTime();
+                var date = dateTime.Day;
+                dateList.Add(date);
+            }
+
+            return dateList;
+        }
+
+        private List<List<CoupleOfSheet>> IdentifyDeiff(List<SecondParamModel> planList, List<SecondParamModel> productList)
         {
             var planDistinctItemCodes = planList.Select(o => o.ItemCode).Distinct().ToList();
             //var productDistinctItemCodes = productList.Select(o => o.ItemCode).Distinct().ToList();
 
-            int rowIndex = 1;
+           // int rowIndex = 1;
 
+
+            List<List<CoupleOfSheet>> list = new List<List<CoupleOfSheet>>();
 
 
 
@@ -48,92 +94,23 @@ namespace ExcelCompaire.CoreFunctions
 
                 var fullOuterJoin = GetValue(planList, productList, itemCode);
 
-
-                int rowIndexOut;
-
-
-                CreateOutPutExcel(fullOuterJoin, rowIndex, out rowIndexOut);
-
-                workSheet.Row(rowIndexOut-1).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-                workSheet.Row(rowIndexOut-1).Style.Border.BottomBorderColor = XLColor.Black;
-
-                rowIndex = rowIndexOut + 1;
-
-            }
-            
-        }
-
-        private void CreateOutPutExcel(List<CoupleOfSheet> itemCodeData, int rowIndex, out int rowIndexOut)
-        {
+                list.Add(fullOuterJoin);
+                //int rowIndexOut;
 
 
-            foreach (CoupleOfSheet data in itemCodeData)
-            {
-                int columnIndex = 0;
-                workSheet.Cell(rowIndex, ++columnIndex).Value = "PLN";
-                //plan
-                SecondParamModel plan = data.PlanItem;
+                //CreateOutPutExcel(fullOuterJoin, rowIndex, out rowIndexOut);
 
-                if (plan != null)
-                {
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = plan.ItemCode;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = plan.Category;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = plan.Style;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = plan.Item;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = plan.OrderQty;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = plan.PlanQty;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = plan.SMO;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = plan.SMV;
+                //workSheet.Row(rowIndexOut-1).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
+                //workSheet.Row(rowIndexOut-1).Style.Border.BottomBorderColor = XLColor.Black;
 
-                    for (int i = columnIndex; i < plan.DateList.Count; i++, columnIndex++)
-                    {
-                        workSheet.Cell(rowIndex, columnIndex).Value = plan.DateList[i];
-                    }
-                }
-                else
-                {
-                   
-                }
-
-                rowIndex++;
-                columnIndex = 0;
-                workSheet.Cell(rowIndex, ++columnIndex).Value = "PRD";
-                //plan
-                SecondParamModel product = data.ProductItem;
-
-                if (product != null)
-                {
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = product.ItemCode;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = product.Category;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = product.Style;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = product.Item;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = product.OrderQty;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = product.PlanQty;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = product.SMO;
-                    workSheet.Cell(rowIndex, ++columnIndex).Value = product.SMV;
-
-                    for (int i = columnIndex; i < product.DateList.Count; i++, columnIndex++)
-                    {
-                        workSheet.Cell(rowIndex, columnIndex).Value = product.DateList[i];
-                    }
-                }
-                else
-                {
-                   
-                }
-
-
-                rowIndex = rowIndex + 1;
-
+                //rowIndex = rowIndexOut + 1;
+                
             }
 
-            workBook.SaveAs(@"C:\Users\Chathuranga.Sandun\Desktop\chathu\OutPutExcel.xlsx");
-            rowIndexOut = rowIndex;
 
-
-
+            return list;
         }
-
+        
         private static List<CoupleOfSheet> GetValue(List<SecondParamModel> planList, List<SecondParamModel> productList, string itemCode)
         {
             var leftJoin = from planItem in planList.Where(o => o.ItemCode == itemCode)
@@ -187,19 +164,6 @@ namespace ExcelCompaire.CoreFunctions
 
 
             var rowList = secontRangeAdditional.AsTable().DataRange.Rows().ToList();
-            //.Select(o => o.FirstCell().Value).ToList()
-
-
-            //date list
-            List<IXLRangeColumn> dateRangeList = worksheet.Range(13, 9, 13, lastColumnNumber).AsRange().Columns().ToList();
-
-            foreach (var cell in dateRangeList)
-            {
-                var dateTime = cell.FirstCell().Value is DateTime ? (DateTime) cell.FirstCell().Value : new DateTime();
-                var date = dateTime.Day;
-            }
-
-
 
             var itemLastRow = rowList.Find(o =>
             {
@@ -214,6 +178,12 @@ namespace ExcelCompaire.CoreFunctions
                 var secondRange = worksheet.Range(_startRow, 1, lastItemRowNumber - 1, lastColumnNumber);
 
                 var secondRowList = secondRange.AsRange().Rows().ToList();
+
+
+                List<int> worksheetDateList = DateList(worksheet);
+
+
+
 
                 int i = 0;
                 foreach (IXLRangeRow row in secondRowList)
@@ -256,12 +226,12 @@ namespace ExcelCompaire.CoreFunctions
                             double d = Double.Parse(pqty);
                             d = Math.Round(d, 0);
 
-                            paramModel.OrderQty = (d.ToString(CultureInfo.InvariantCulture).Split('.')[0]);
+                            paramModel.PlanQty = (d.ToString(CultureInfo.InvariantCulture).Split('.')[0]);
 
                         }
                         else
                         {
-                            paramModel.OrderQty = (oqty);
+                            paramModel.PlanQty = (pqty);
                         }
 
 
@@ -269,27 +239,30 @@ namespace ExcelCompaire.CoreFunctions
                         paramModel.SMO = cellList[7].Value.ToString();
 
 
+                        Dictionary<int , string> dateDictionary = new Dictionary<int, string>();
 
-                        List<string> dateList = new List<string>();
-                        foreach (var value in cellList.Skip(8).Take(lastColumnNumber - 8).ToList())
+
+                        for (int j = 8; j < lastColumnNumber; j++)
                         {
-                            var dateValue = value.Value.ToString();
-                            if (value.Value.ToString() != "")
+                            IXLCell cell = cellList[j];
+
+                            var dateValue = cell.Value.ToString();
+                            if (dateValue!= "")
                             {
 
                                 double d = Double.Parse(dateValue);
                                 d = Math.Round(d, 0);
 
-                                dateList.Add(d.ToString(CultureInfo.InvariantCulture).Split('.')[0]);
+                                dateDictionary.Add(worksheetDateList[j-8],d.ToString(CultureInfo.InvariantCulture).Split('.')[0]);
 
                             }
                             else
                             {
-                                dateList.Add(dateValue);
+                                dateDictionary.Add(worksheetDateList[j - 8], dateValue);
                             }
                         }
 
-                        paramModel.DateList = dateList;
+                        paramModel.DateList = dateDictionary;
 
                         secondParamModels.Add(paramModel);
                     }
@@ -302,7 +275,7 @@ namespace ExcelCompaire.CoreFunctions
         }
     }
 
-    class CoupleOfSheet
+    public class CoupleOfSheet
     {
         public SecondParamModel PlanItem { get; set; }
         public SecondParamModel ProductItem { get; set; }

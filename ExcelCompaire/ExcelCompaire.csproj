@@ -193,6 +193,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\DifferenceExcelController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="CoreFunctions\CreateOutPut.cs" />
     <Compile Include="CoreFunctions\ExcelDifferences.cs" />
     <Compile Include="CoreFunctions\StaticExtentions.cs" />
     <Compile Include="Enums\ExcelFileType.cs" />
